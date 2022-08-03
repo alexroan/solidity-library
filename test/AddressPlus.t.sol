@@ -11,6 +11,8 @@ contract AddressPlusTest_callWithGas is Test {
 
     uint256 internal constant NUMBER = 55;
     uint256 internal constant GAS_AMOUNT = 100000;
+    uint256 internal constant MSG_VALUE_ZERO = 0;
+    uint256 internal constant MSG_VALUE_ONE = 1;
 
     event Called(uint256 indexed number);
 
@@ -26,18 +28,18 @@ contract AddressPlusTest_callWithGas is Test {
         (bool success, bytes memory returnData) = s_plus.callWithGas(
             address(s_receiver),
             GAS_AMOUNT,
-            0,
+            MSG_VALUE_ZERO,
             abi.encodeWithSelector(s_receiver.callMe.selector, NUMBER)
         );
         assertTrue(success);
         assertEq(returnData, new bytes(0));
     }
 
-    function testBasicCallGasErrorRevert() public {
+    function testBasicCallGasErrorRevertsSuccess() public {
         (bool success, bytes memory returnData) = s_plus.callWithGas(
             address(s_receiver),
             100,
-            0,
+            MSG_VALUE_ZERO,
             abi.encodeWithSelector(s_receiver.callMe.selector, NUMBER)
         );
         assertFalse(success);
@@ -48,7 +50,7 @@ contract AddressPlusTest_callWithGas is Test {
         (bool success, bytes memory returnData) = s_plus.callWithGas(
             address(s_receiver),
             GAS_AMOUNT,
-            0,
+            MSG_VALUE_ZERO,
             abi.encodeWithSelector(s_receiver.callMeReturn.selector, NUMBER)
         );
         assertTrue(success);
@@ -59,7 +61,7 @@ contract AddressPlusTest_callWithGas is Test {
         (bool success, bytes memory returnData) = s_plus.callWithGas(
             address(s_receiver),
             GAS_AMOUNT,
-            0,
+            MSG_VALUE_ZERO,
             abi.encodeWithSelector(s_receiver.callMeRevert.selector, NUMBER)
         );
         assertFalse(success);
@@ -67,5 +69,30 @@ contract AddressPlusTest_callWithGas is Test {
             returnData,
             abi.encodeWithSelector(AddressPlusReceiver.CustomRevertMessage.selector, NUMBER)
         );
+    }
+
+    function testBasicCallNonPayableRevertsSuccess() public {
+        (bool success, bytes memory returnData) = s_plus.callWithGas{value: 1}(
+            address(s_receiver),
+            GAS_AMOUNT,
+            MSG_VALUE_ONE,
+            abi.encodeWithSelector(s_receiver.callMe.selector, NUMBER)
+        );
+        assertFalse(success);
+        assertEq(returnData, new bytes(0));
+    }
+
+    function testBasicCallPayableSuccess() public {
+        vm.expectEmit(true, false, false, true);
+        emit Called(MSG_VALUE_ONE);
+
+        (bool success, bytes memory returnData) = s_plus.callWithGas{value: 1}(
+            address(s_receiver),
+            GAS_AMOUNT,
+            MSG_VALUE_ONE,
+            abi.encodeWithSelector(s_receiver.callMePayable.selector)
+        );
+        assertTrue(success);
+        assertEq(returnData, new bytes(0));
     }
 }

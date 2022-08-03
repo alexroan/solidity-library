@@ -4,6 +4,17 @@ pragma solidity ^0.8.15;
 library AddressPlus {
     uint256 private constant GAS_FOR_CALL_EXACT_CHECK = 5000;
 
+    /**
+     * @notice Call an address passing a specific amount of gas to the target.
+     * @dev If the receiver reverts, this function will not revert. Instead, it will
+     * return success=false and returnData=abi encoded error message defined by the receiver.
+     * @param target address
+     * @param gasAmount amount of gas to pass to the receiver
+     * @param value value in ETH to send to the receiver
+     * @param data calldata to send to the receiver
+     * @return success true if the call passes, false if it reverts
+     * @return returnData return data or revert data from the receiver
+     */
     function callWithGas(
         address target,
         uint256 gasAmount,

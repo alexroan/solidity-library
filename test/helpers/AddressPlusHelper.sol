@@ -13,6 +13,7 @@ contract AddressPlusHelper {
         bytes memory data
     )
         public
+        payable
         returns (bool success, bytes memory returnData)
     {
         return target.callWithGas(gasAmount, value, data);

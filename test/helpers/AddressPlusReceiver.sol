@@ -17,4 +17,10 @@ contract AddressPlusReceiver {
     function callMeRevert(uint256 number) external pure {
         revert CustomRevertMessage(number);
     }
+
+    function callMePayable() external payable {
+        emit Called(msg.value);
+    }
+
+    receive() external payable {}
 }

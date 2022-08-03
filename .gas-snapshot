@@ -1,0 +1,6 @@
+AddressPlusTest_callWithGas:testBasicCallGasErrorRevertsSuccess() (gas: 12686)
+AddressPlusTest_callWithGas:testBasicCallNonPayableRevertsSuccess() (gas: 26159)
+AddressPlusTest_callWithGas:testBasicCallPayableSuccess() (gas: 31192)
+AddressPlusTest_callWithGas:testBasicCallRevertSuccess() (gas: 23098)
+AddressPlusTest_callWithGas:testBasicCallSuccess() (gas: 18057)
+AddressPlusTest_callWithGas:testBasicCallWithReturnDataSuccess() (gas: 21707)
